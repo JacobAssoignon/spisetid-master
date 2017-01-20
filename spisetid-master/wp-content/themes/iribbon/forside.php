@@ -20,14 +20,15 @@ if (isset($_POST['search'])) {
     $vals = "'" . str_replace(",", "', '", $searchquery) . "'";
 
     //$query = mysql_query("SELECT * FROM opskrifter WHERE id IN (SELECT opskrifterid FROM ingredienser WHERE ing_name IN ($vals)) ORDER BY navn") or die(mysql_error() . " søgning mislykkedes");
-    $query = mysql_query("SELECT *, COUNT(*) as `total_ingredients`
-  FROM opskrifter as k
-     , ingredienser as i
- WHERE k.id = i.opskrifterid 
+    $query = mysql_query("SELECT k.id
+     , k.name
+     , COUNT(*) as `total_ingredients`
+  FROM receipts as k
+     , ingredients as i
+ WHERE k.id = i.receipt_id 
    AND i.ing_name IN ($vals)
-   GROUP BY k.id
- ORDER BY COUNT(*) DESC") or die(mysql_error() . " søgning mislykkedes");
-
+   GROUP BY k.id, k.name
+ ORDER BY COUNT(*) DESC");
 
     $count = mysql_num_rows($query);
     if ($count == 0) {
